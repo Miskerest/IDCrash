@@ -56,7 +56,7 @@ def main():
                     elif(wordlist == None):
                         print("Specify wordlist filename: ")
                         wordlist = raw_input()
-                        if(!os.path.isfile(wordlist)):
+                        if(not os.path.isfile(wordlist)):
                             print("Wordlist not found, using default wordlist of \"wordlist\".")
                             wordlist = "wordlist"
                             time.sleep(5)

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>IDCrash by Miskerest</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>IDCrash</h1>
+        <h2>Automatically identifies and cracks hashes.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/Miskerest/IDCrash/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/Miskerest/IDCrash/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/Miskerest/IDCrash" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="idcrash" class="anchor" href="#idcrash" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>IDCrash</h1>
+
+<h3>
+<a id="update---july-2016" class="anchor" href="#update---july-2016" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>UPDATE - July 2016</h3>
+
+<ol>
+<li>Fixed lots of bugs
+
+<ul>
+<li>Now displays correct hash-type after cracking!</li>
+<li>No longer performs needless work!</li>
+<li>
+<code>cracked_hashes.txt</code>'s contents aren't lost after every run!</li>
+<li>Now detects your OS by default!</li>
+<li>Other stuff!</li>
+</ul>
+</li>
+<li><strong>Added Windows support</strong></li>
+<li>Made code easier to read (I hope)</li>
+<li>Changed <code>main()</code> to be much less of a clusterfμ¢*.</li>
+</ol>
+
+<h2>
+<a id="about" class="anchor" href="#about" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>About</h2>
+
+<p>This is a Python script that combines psypanda's <strong>hashID</strong> and <strong>hashcat</strong> functionality.</p>
+
+<p>It's likely full of bugs, so use at your own risk, but it should be useful for CTF events and the like.</p>
+
+<p>Simply run <code>main.py</code> with Python, enter your hash, and the program will try all hashcat options that hashID delegates to it until it either cracks a hash or runs out of options.</p>
+
+<p>To test functionality, try hashing "password". This is included in the default wordlist.</p>
+
+<h4>
+<a id="wordlists" class="anchor" href="#wordlists" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Wordlists</h4>
+
+<p>I only provide a sample/testing wordlist. To use this effectively, you'll need to supply your own wordlist. Check <a href="https://hashcat.net/forum/thread-1236.html">here</a> for a large array of wordlists.</p>
+
+<h5>
+<a id="credit-goes-to-psypanda-and-the-hashcat-team-for-two-great-programs-that-are-used-in-this-script" class="anchor" href="#credit-goes-to-psypanda-and-the-hashcat-team-for-two-great-programs-that-are-used-in-this-script" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Credit goes to <strong>psypanda</strong> and the <strong>hashcat team</strong> for two great programs that are used in this script.</h5>
+      </section>
+    </div>
+
+    
+  </body>
+</html>

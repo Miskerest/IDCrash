@@ -764,7 +764,7 @@ class HashID(object):
                     yield mode
 
 
-def writeResult(identified_modes, outfile, hashcatMode=False, johnFormat=False, extended=False):
+def writeResult(identified_modes, hashcatMode=False, johnFormat=False, extended=False):
     """Write human readable output from identifyHash"""
     count = 0
     hashTypes = ""
@@ -777,10 +777,9 @@ def writeResult(identified_modes, outfile, hashcatMode=False, johnFormat=False, 
             if johnFormat and mode.john is not None:
                 hashTypes += "[JtR Format: {0}]".format(mode.john)
             hashTypes += "\n"
-    outfile.write(hashTypes)
     if count == 0:
-        outfile.write(u"[+] Unknown hash\n")
-    return (count > 0)
+        return "[+] Unknown hash\n"
+    return hashTypes
 
 
 def main():

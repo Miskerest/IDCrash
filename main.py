@@ -2,11 +2,9 @@
 import os, sys, subprocess, time, platform
 import hashID.hashid as HID
 
-
 ##TODO: Add argument that passes wordlist and hashfile, so that program will ID and attempt to crack
 ## all hashes in the file with a given wordlist
 ##TODO: Add detection for hashcat success without querying cracked_hashes.txt
-##TODO: Make $hashtype variable global for simplicity
 
 wordlistnames = ["rockyou", "rockyou.txt", "wordlist", "wordlist.txt", "passwords", "passwords.txt"]
 OS = ""
@@ -14,36 +12,8 @@ OS = ""
 def cls():
     if OS == "Windows":
         os.system("cls")
-    elif OS == "Linux":
+    elif OS == "Linux" or OS.lower() == "Darwin".lower():
         os.system("clear")
-
-def checkHashcat():
-    if "Linux" in OS:
-        proc = subprocess.Popen(["hashcat/hashcat-cli64.bin", "--help"], stdout=subprocess.PIPE, shell=True)
-        (out, err) = proc.communicate()
-        if "hashfile" in out:
-            pass
-        else:
-            try:
-                proc = subprocess.Popen(["hashcat/hashcat-cli32.bin", "--help"], stdout=subprocess.PIPE, shell=True)
-                (out, err) = proc.communicate()
-                if "hashfile" in out:
-                    pass
-            except:
-                cls()
-                print("Hashcat isn't working properly, try installing using apt-get or downloading binaries and adding them in the root program directory to a folder called \"hashcat\"")
-                sys.exit(1)
-
-    elif "Windows" in OS:
-        try:
-            proc = subprocess.Popen(["hashcat\hashcat-cli64.exe", "--help"], stdout=subprocess.PIPE, shell=True)
-            (out, err) = proc.communicate()
-            if "hashfile" in out:
-                pass
-        except:
-            cls()
-            print("Hashcat isn't working properly, try installing using apt-get or downloading binaries and adding them in the root program directory to a folder called \"hashcat\"")
-            sys.exit(1)
 
 def findWordlist():
     if(os.path.isfile("wordlist")):
@@ -57,10 +27,18 @@ def findWordlist():
         time.sleep(3)
 
 def crack(m, wordlist):
-    if "Windows" in OS:
-        proc = subprocess.call(["hashcat/hashcat-cli64.exe", "-m" + str(m), "hash", wordlist, "-ocracked_hashes.txt"])
-    elif "Linux" in OS:
-        proc = subprocess.call(["hashcat\hashcat-cli64.bin", "-m" + str(m), "hash", wordlist, "-ocracked_hashes.txt"])
+    try:
+        if "Windows" in OS and "64" in platform.machine():
+            proc = subprocess.call(["hashcat/hashcat-cli64.exe", "-m" + str(m), "hash", wordlist, "-ocracked_hashes.txt"])
+        elif "Windows" in OS and "64" not in platform.machine():
+            proc = subprocess.call(["hashcat/hashcat-cli32.exe", "-m" + str(m), "hash", wordlist, "-ocracked_hashes.txt"])
+        elif "Linux" or "Darwin" in OS and "64" in platform.machine():
+            proc = subprocess.call(["hashcat\hashcat-cli64.bin", "-m" + str(m), "hash", wordlist, "-ocracked_hashes.txt"])
+        elif "Linux" or "Darwin" in OS and "64" not in platform.machine():
+            proc = subprocess.call(["hashcat\hashcat-cli32.bin", "-m" + str(m), "hash", wordlist, "-ocracked_hashes.txt"])
+    except:
+        cls()
+        print("Hashcat isn't working properly. This may be a bug, or your system is not currently supported by Hashcat.")
 
 def cracked():
     try:
@@ -84,54 +62,56 @@ def crackedHashes(hashtype):
         return("Type: " + hashtype + ":: " + f.read())
 
 def main():
-        checkHashcat()
         cls()
 
-        with open('hashtypes', 'w') as hashtype:
-            ID = HID.HashID()
-            print("Enter your hash: ")
-            hash = raw_input()
-            with open("hash", "w") as h:
-                h.write(hash)
-            HID.writeResult(ID.identifyHash(hash), hashtype, True)
+        ID = HID.HashID()
+        hash = raw_input("Enter your hash: ")
+        with open("hash", "w") as h:
+            h.write(hash)
+        s = HID.writeResult(ID.identifyHash(hash), True).split("\n")
 
-        with open('hashtypes', 'r') as f: #ghetto, I know. will fix in future
-            s = f.readlines()
+        count = "".join(s).count("Mode: ")
 
-        found = False
-        pls = "".join(s)
-        count = pls.count("Mode: ")
-
-        while(not found and count > 0):
+        for i in range(count):
             for line in s:
                 if "Mode:" in line:
                     i = line.find("Mode: ")
-                    m = line[i+6:-2]
+                    m = line[i+6:-1]
                     hashtype = line[:line.find("[Hashcat")]
                     print("\n\nStarting hashcat with m = " + m + "\n\n")
 
                     wordlist = findWordlist()
                     crack(m, wordlist)
-                    count -= 1
                     found = cracked()
 
                     if found:
                         printResults(found, hashtype)
+                        if "Y" in raw_input("Save cracked hashes? Y/N: ").upper():
+                            print("Writing previous results to \"old_cracked_hashes.txt\"...")
+                            with open("old_cracked_hashes.txt", "a") as old:
+                                old.write(crackedHashes(hashtype))
+                                os.remove('cracked_hashes.txt')
                         break
 
-        print("Would you like to delete the cracked_hashes.txt file? Y/N")
-        if "Y" in raw_input().upper():
-            print("Writing previous results to \"old_cracked_hashes.txt\"...")
-            with open("old_cracked_hashes.txt", "a") as old:
-                old.write(crackedHashes(hashtype))
-            os.remove('cracked_hashes.txt')
-        os.remove('hashtypes')
-        os.remove('hash')
+            if not found:
+                cls()
+                print("No results or valid hash-types found.")
+            os.remove('hash')
+            sys.exit(0)
 
 if __name__ == "__main__":
     try:
         OS = platform.system()
-        main()
+        if os.path.isfile("cracked_hashes.txt"):
+            os.remove("cracked_hashes.txt")
+
+        if len(sys.argv) <= 1:
+            main()
+        elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
+            print("\nUsage: run \"python main.py\" with no arguments. \n\nAlternatively: \nrun with --wordlist [wordlist] to specify a wordlist \nrun with --hashfile [hashfile] to specify a hashfile")
+            print("(NOT ADDED YET)")
+            sys.exit(0)
 
     except KeyboardInterrupt:
-        pass
+        os.remove("hashtypes")
+        sys.exit(0)

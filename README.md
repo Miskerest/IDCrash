@@ -1,6 +1,6 @@
 # IDCrash
 
-##About
+## About
 
 This is a Python script that combines psypanda's **hashID** and **hashcat** functionality.
 
@@ -10,10 +10,10 @@ Simply run `main.py` with Python, enter your hash, and the program will try all 
 
 To test functionality, try hashing "password". This is included in the default wordlist.
 
-####Wordlists
+#### Wordlists
 I only provide a sample/testing wordlist. To use this effectively, you'll need to supply your own wordlist. Check [here](https://hashcat.net/forum/thread-1236.html) for a large array of wordlists.
 
-###UPDATE - July 2016
+### UPDATE - July 2016
 1. Fixed lots of bugs
    * Now displays correct hash-type after cracking!
    * No longer performs needless work!
